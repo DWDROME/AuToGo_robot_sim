@@ -26,10 +26,10 @@ sudo apt install ros-${ROS_DISTRO}-slam-gmapping \
 
 ### Step 1. 启动 Gazebo 仿真环境
 
-选择任意 **带传感器的世界**（推荐 Playpen）：
+选择任意 **带传感器的世界**（推荐 house）：
 
 ```bash
-roslaunch scout_gazebo_sim scout_mini_playpen.launch
+roslaunch scout_gazebo_sim scout_mini_house.launch
 # 或
 # roslaunch scout_gazebo_sim scout_mini_empty_world.launch
 # roslaunch scout_gazebo_sim scout_mini_house.launch

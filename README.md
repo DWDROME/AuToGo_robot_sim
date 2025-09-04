@@ -54,7 +54,7 @@
 mkdir -p ~/autogo_ws/src && cd ~/autogo_ws/src
 
 # 2) 克隆本仓库与 Mid360 仿真插件
-git clone https://github.com/<your-username>/AuToGo_robot_sim.git
+git clone https://github.com/DWDROME/AuToGo_robot_sim.git
 git clone https://github.com/DWDROME/Mid360_simulation_plugin.git
 
 # 3) 安装常用依赖
