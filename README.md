@@ -106,6 +106,8 @@ roslaunch scout_gazebo_sim scout_mini_house.launch
 roslaunch scout_gazebo_sim scout_empty_world.launch
 ```
 
+![fast-lio](./doc/gazebo仿真图.png)
+
 ---
 
 ## 5. 算法运行
@@ -123,6 +125,9 @@ roslaunch fast_lio mapping_mid360.launch
 * IMU 默认话题：`/imu`
 * 点云话题：`/livox/lidar`
 * 需要根据话题名 / TF / 频率进行少量调整，详见 `docs/fastlio.md`
+
+
+![fast-lio](./doc/fast-lio.png)
 
 ---
 
