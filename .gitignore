@@ -1,0 +1,23 @@
+# Catkin/Gazebo/ROS build artifacts
+build/
+devel/
+logs/
+.install/
+catkin_generated/
+CMakeFiles/
+CMakeCache.txt
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Python/Cache
+__pycache__/
+*.pyc
+
+# Misc
+.DS_Store
+Thumbs.db

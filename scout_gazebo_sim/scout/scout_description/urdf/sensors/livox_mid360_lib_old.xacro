@@ -1,0 +1,143 @@
+
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!-- ========= 公用 =========== -->
+  <xacro:macro name="null_inertial">
+    <inertial>
+      <mass value="0.1"/>
+      <inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01"/>
+    </inertial>
+  </xacro:macro>
+
+  <!-- ========= 低层：挂 Livox 插件的传感器宏（不实例化 link/joint） =========== -->
+  <xacro:macro name="Livox_Mid_gazebo_sensor"
+               params="
+                 link_name
+                 visualize:=true
+                 update_rate:=10
+                 resolution:=0.002
+                 noise_mean:=0.0
+                 noise_stddev:=0.01
+                 ros_topic:=/livox/point_cloud
+                 samples:=24000
+                 downsample:=1
+                 csv_file_name">
+    <gazebo reference="${link_name}">
+      <sensor type="ray" name="${link_name}">
+        <pose>0 0 0 0 0 0</pose>
+        <visualize>${visualize}</visualize>
+        <update_rate>${update_rate}</update_rate>
+
+        <!-- 仅供可视化的 Ray 配置（角度范围可按需要调整） -->
+        <plugin name="gazebo_ros_laser_controller" filename="liblivox_laser_simulation.so">
+          <ray>
+            <scan>
+              <horizontal>
+                <samples>100</samples>
+                <resolution>1</resolution>
+                <min_angle>0</min_angle>
+                <max_angle>6.28318530718</max_angle> <!-- 2*pi -->
+              </horizontal>
+              <vertical>
+                <samples>360</samples>
+                <resolution>1</resolution>
+                <min_angle>-0.126028</min_angle> <!-- -7.22deg -->
+                <max_angle> 0.963756</max_angle> <!-- 55.22deg -->
+              </vertical>
+            </scan>
+            <range>
+              <min>0.1</min>
+              <max>200.0</max>
+              <resolution>${resolution}</resolution>
+            </range>
+            <noise>
+              <type>gaussian</type>
+              <mean>${noise_mean}</mean>
+              <stddev>${noise_stddev}</stddev>
+            </noise>
+          </ray>
+
+          <!-- 插件自有参数（影响输出点云） -->
+          <visualize>${visualize}</visualize>
+          <samples>${samples}</samples>
+          <downsample>${downsample}</downsample>
+          <csv_file_name>${csv_file_name}</csv_file_name>
+          <ros_topic>${ros_topic}</ros_topic>
+        </plugin>
+
+
+        
+      </sensor>
+    </gazebo>
+  </xacro:macro>
+
+  <!-- ========= 顶层：真正供外部调用的“库化”宏（创建 link 并挂传感器） =========== -->
+  <!-- 你只需要调用这一层 -->
+  <xacro:macro name="Livox_Mid40"
+               params="
+                 parent_link:=base_link
+                 name:=livox
+                 xyz:='0 0 0.14'
+                 rpy:='0 0 0'
+                 visualize:=true
+                 ros_topic:=/livox/point_cloud
+                 csv_file_name
+                 update_rate:=10
+                 resolution:=0.002
+                 noise_mean:=0.0
+                 noise_stddev:=0.01
+                 samples:=24000
+                 downsample:=1">
+
+    <!-- 外壳（用于可视/碰撞），独立于传感器 link -->
+    <link name="${name}_base">
+      <xacro:null_inertial/>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <!-- 使用 livox 仓库里的模型（Mid40外观，mid360 也沿用） -->
+          <mesh filename="package://livox_laser_simulation/meshes/livox_mid-360-90x.dae"/>
+        </geometry>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://livox_laser_simulation/meshes/livox_mid-360-90x.dae"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <!-- 真正用于挂传感器插件的 link（TF/坐标系） -->
+    <link name="${name}_sensor">
+      <xacro:null_inertial/>
+    </link>
+
+    <!-- 机身 -> 传感器外壳（可按需有偏置，这里给 0 0 0） -->
+    <joint name="${name}_base_mount" type="fixed">
+      <parent link="${parent_link}"/>
+      <child  link="${name}_base"/>
+      <origin xyz="${xyz}" rpy="${rpy}"/>
+    </joint>
+
+    <!-- 外壳 -> 传感器 link（保留原文件中的 0 1.0 0.2 作为模型内部偏置；你也可以改成 0 0 0） -->
+    <joint name="${name}_to_base" type="fixed">
+      <parent link="${name}_base"/>
+      <child  link="${name}_sensor"/>
+      <origin xyz="0.0 1.0 0.2" rpy="0 0 0"/>
+    </joint>
+
+    <!-- 在传感器 link 上挂 livox 插件 -->
+    <xacro:Livox_Mid_gazebo_sensor
+        link_name="${name}_sensor"
+        visualize="${visualize}"
+        update_rate="${update_rate}"
+        resolution="${resolution}"
+        noise_mean="${noise_mean}"
+        noise_stddev="${noise_stddev}"
+        ros_topic="${ros_topic}"
+        samples="${samples}"
+        downsample="${downsample}"
+        csv_file_name="${csv_file_name}"/>
+  </xacro:macro>
+
+</robot>
