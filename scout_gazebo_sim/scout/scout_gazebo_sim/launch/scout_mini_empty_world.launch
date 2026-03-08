@@ -1,6 +1,6 @@
 <launch>
 
-    <arg name="robot_namespace" default="/"/>
+    <arg name="robot_namespace" default=""/>
 
     <!-- Load the surrounding environment into Gazebo -->
     <arg name="world_name" default="$(find scout_gazebo_sim)/worlds/weston_robot_empty.world"/>
@@ -16,6 +16,7 @@
     <include file="$(find scout_gazebo_sim)/launch/spawn_scout_mini.launch">
         <arg name="x" value="0.0"/>
         <arg name="y" value="0.0"/>
+        <arg name="robot_namespace" value="$(arg robot_namespace)"/>
     </include>
         
     <node name="rviz" pkg="rviz" type="rviz" args="-d $(find scout_description)/rviz/navigation.rviz" />

@@ -17,7 +17,7 @@ int main(int argc, char **argv) {
   // fetch parameters
   std::string robot_namespace;
   private_node.param<std::string>("robot_namespace", robot_namespace,
-                                  std::string("scout_default"));
+                                  std::string(""));
 
   ROS_INFO("Namespace: %s", robot_namespace.c_str());
 
