@@ -75,7 +75,7 @@ roslaunch scout_slam gmapping_save.launch map_file:=map1
 
 1. **话题配置**
 
-   * Laser 输入：`/scan`
+   * Laser 输入：`/hokuyo/scan`
    * 里程计输入：`/odom`（由 EKF 输出）
    * 地图输出：`/map`
 
@@ -130,6 +130,11 @@ roslaunch scout_slam gmapping_save.launch map_file:=map1
      ```bash
      rosrun map_server map_saver -f ~/scout_ws/src/scout_slam/maps/map1
      ```
+
+4. **启动后没有 2D 激光数据**
+
+   * 请勿使用 `scout_mini_playpen.launch` 运行 GMapping；该启动文件默认关闭 2D Hokuyo 雷达，并切换为 Livox / Fast-LIO 配置
+   * 2D SLAM 与 Navigation 请使用 `scout_mini_house.launch` 或 `scout_mini_empty_world.launch`
 
 ---
 
