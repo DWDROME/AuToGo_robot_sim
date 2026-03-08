@@ -13,8 +13,20 @@
 #include <std_msgs/Float64.h>
 
 namespace wescore {
+namespace {
+std::string NormalizeNamespace(std::string robot_name) {
+  while (!robot_name.empty() && robot_name.front() == '/') {
+    robot_name.erase(robot_name.begin());
+  }
+  while (!robot_name.empty() && robot_name.back() == '/') {
+    robot_name.pop_back();
+  }
+  return robot_name.empty() ? std::string("") : "/" + robot_name;
+}
+}  // namespace
+
 ScoutSkidSteer::ScoutSkidSteer(ros::NodeHandle *nh, std::string robot_name)
-    : nh_(nh), robot_name_(robot_name) {
+    : nh_(nh), robot_name_(NormalizeNamespace(std::move(robot_name))) {
   motor_fr_topic_ = robot_name_ + "/scout_motor_fr_controller/command";
   motor_fl_topic_ = robot_name_ + "/scout_motor_fl_controller/command";
   motor_rl_topic_ = robot_name_ + "/scout_motor_rl_controller/command";

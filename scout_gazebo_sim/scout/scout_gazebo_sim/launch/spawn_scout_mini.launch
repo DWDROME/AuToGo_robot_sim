@@ -5,7 +5,7 @@
     <arg name="z" default="0.0"/>
     <arg name="yaw" default="0.0"/>
 
-    <arg name="robot_namespace" default="/"/>
+    <arg name="robot_namespace" default=""/>
 
     <!-- Sensors -->
     <arg name="2d_lidar"            default="true"  />
@@ -118,7 +118,7 @@
               -unpause
               -urdf
               -param robot_description
-              -model 'scout$(arg robot_namespace)'" />
+              -model 'scout$(eval '_' + arg(&quot;robot_namespace&quot;).strip(&quot;/&quot;) if arg(&quot;robot_namespace&quot;).strip(&quot;/&quot;) else '')'" />
 
     <!-- Load joint controller configurations from YAML file to parameter server -->
     <rosparam file="$(find scout_gazebo_sim)/config/scout_v2_control.yaml" command="load"/>

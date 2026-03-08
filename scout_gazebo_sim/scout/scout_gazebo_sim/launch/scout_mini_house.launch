@@ -28,7 +28,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
   <arg name="y_pos" default="1.0"/>
 
 
-    <arg name="robot_namespace" default="/"/>
+    <arg name="robot_namespace" default=""/>
     <arg name="world_name" default="$(find scout_gazebo_sim)/worlds/turtlebot3_house.world"/>
 
     <include file="$(find gazebo_ros)/launch/empty_world.launch">
@@ -42,7 +42,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
     <include file="$(find scout_gazebo_sim)/launch/spawn_scout_mini.launch">
       <arg name="x" value="$(arg x_pos)"/>
-      <arg name="y" value="$(arg y_pos)"/>    
+      <arg name="y" value="$(arg y_pos)"/>
+      <arg name="robot_namespace" value="$(arg robot_namespace)"/>
     </include>
         
     <!-- <node name="rviz" pkg="rviz" type="rviz" args="-d $(find scout_description)/rviz/navigation.rviz" /> -->
