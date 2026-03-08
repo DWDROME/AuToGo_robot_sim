@@ -1,79 +1,92 @@
----
+# AuToGo_robot_sim
 
-# AuToGo\_robot\_sim
+A multi-functional mobile robot simulation platform based on `ROS1 Noetic` and `Gazebo 11`.
 
-基于 **ROS1 Noetic / Gazebo** 的 **多功能移动机器人仿真平台**。
-本项目提供从 **SLAM、EKF 融合、导航** 到 **Fast-LIO 高精度点云建图** 的完整实验环境，并集成了 **Livox Mid-360 仿真插件**，可用于多场景、多模式下的自主导航与定位研究。
+This repository provides a practical environment for robotics research and prototyping, covering SLAM, EKF-based localization, navigation, and Fast-LIO point-cloud mapping. It also integrates `Livox Mid-360` simulation support for multi-scene localization and navigation experiments.
 
----
+## Overview
 
-## 1. 功能概览
+`AuToGo_robot_sim` is intended as a reusable simulation baseline for:
 
-* **多世界场景支持**
+- robotics learning and experimentation
+- SLAM and navigation prototyping
+- sensor integration testing
+- validating algorithms before deployment on real robots
 
-  * `scout_mini_empty_world.launch`：空旷场景（含传感器）
-  * `scout_mini_playpen.launch`：Playpen 测试场景（含传感器，可选 3D 配置）
-  * `scout_mini_house.launch`：House 场景（含传感器）
-  * `scout_empty_world.launch`：空世界（无传感器）
+The current public scope focuses on:
 
-* **传感器仿真**
+- multi-scene Gazebo simulation
+- 2D and 3D sensor simulation
+- EKF localization
+- 2D SLAM with GMapping
+- autonomous navigation with the ROS Navigation Stack
+- Fast-LIO experiments with Livox Mid-360
 
-  * 2D 激光雷达
-  * 3D 激光雷达（VLP-16 / HDL-32E / Mid-360）
-  * IMU、GPS
-  * RGB / 深度相机
+## Features
 
-* **算法支持**
+### Simulation worlds
 
-  * EKF 融合定位
-  * 2D SLAM（GMapping）
-  * Navigation Stack 自主导航
-  * Fast-LIO（Livox Mid-360 点云建图，**核心目标**）
+- `scout_mini_empty_world.launch`: empty scene with sensors
+- `scout_mini_playpen.launch`: playpen test scene with sensors and optional 3D setup
+- `scout_mini_house.launch`: house scene with sensors
+- `scout_empty_world.launch`: empty world without sensors
 
----
+### Sensor simulation
 
-## 2. 系统环境与依赖
+- 2D LiDAR
+- 3D LiDAR: `VLP-16`, `HDL-32E`, `Mid-360`
+- IMU
+- GPS
+- RGB camera
+- depth camera
 
-* **系统**：Ubuntu 20.04 + ROS Noetic + Gazebo 11
-* **依赖**：
+### Supported workflows
 
-  * `slam_gmapping`
-  * `navigation`
-  * `robot_localization`
-  * `tf2_sensor_msgs`
-  * 其他依赖由 `rosdep` 自动安装
+- EKF-based localization
+- 2D SLAM with `GMapping`
+- autonomous navigation with the ROS Navigation Stack
+- Fast-LIO mapping with `Livox Mid-360`
 
----
+## System Requirements
 
-## 3. 安装
+- Ubuntu 20.04
+- ROS Noetic
+- Gazebo 11
 
-### 仿真环境（本仓库）
+Main dependencies include:
+
+- `slam_gmapping`
+- `navigation`
+- `robot_localization`
+- `tf2_sensor_msgs`
+
+Additional ROS dependencies can be installed with `rosdep`.
+
+## Installation
+
+### Simulation workspace
 
 ```bash
-# 1) 创建工作空间
 mkdir -p ~/autogo_ws/src && cd ~/autogo_ws/src
 
-# 2) 克隆本仓库与 Mid360 仿真插件
 git clone https://github.com/DWDROME/AuToGo_robot_sim.git
 git clone https://github.com/DWDROME/Mid360_simulation_plugin.git
 
-# 3) 安装常用依赖
 chmod +x AuToGo_robot_sim/install_packages.sh
 ./AuToGo_robot_sim/install_packages.sh
 
-# 4) 用 rosdep 安装剩余依赖
 cd ~/autogo_ws
 rosdep install --from-paths src --ignore-src -r -y
 
-# 5) 构建
 sudo apt install -y python3-catkin-tools
 catkin build
 
-# 6) 环境变量
 source devel/setup.bash
 ```
 
-### Fast-LIO（推荐单独工作空间）
+### Fast-LIO workspace
+
+It is recommended to keep Fast-LIO in a separate workspace:
 
 ```bash
 mkdir -p ~/fastlio_ws/src && cd ~/fastlio_ws/src
@@ -83,136 +96,122 @@ cd ..
 catkin_make
 ```
 
-⚠️ Fast-LIO 默认依赖 `livox_ros_driver`，需要替换为 `livox_ros_driver2`。
-具体说明见 `docs/fastlio.md`。
+`Fast-LIO` depends on `livox_ros_driver` by default, so this setup uses `livox_ros_driver2` instead. See `doc/fastlio.md` for notes about topics and integration details.
 
----
+## Launch Gazebo Simulation
 
-## 4. 启动 Gazebo 仿真
-
-项目提供 **三种带传感器的世界** 与 **一种空世界**：
+The repository currently provides three sensor-enabled worlds and one empty world:
 
 ```bash
-# 空旷场景（含传感器）
 roslaunch scout_gazebo_sim scout_mini_empty_world.launch
-
-# Playpen 场景（含传感器，可选 3D）
 roslaunch scout_gazebo_sim scout_mini_playpen.launch
-
-# House 场景（含传感器）
 roslaunch scout_gazebo_sim scout_mini_house.launch
-
-# 空世界（无传感器）
 roslaunch scout_gazebo_sim scout_empty_world.launch
 ```
 
-![fast-lio](./doc/gazebo仿真图.png)
+![Gazebo simulation](./doc/gazebo仿真图.png)
 
----
+## Run the Algorithms
 
-## 5. 算法运行
-
-### 5.1 Fast-LIO 仿真（核心目标）
+### Fast-LIO simulation
 
 ```bash
-# 启动带传感器的 Gazebo 世界（例：Playpen）
 roslaunch scout_gazebo_sim scout_mini_playpen.launch
-
-# 启动 Fast-LIO
 roslaunch fast_lio mapping_mid360.launch
 ```
 
-* IMU 默认话题：`/imu`
-* 点云话题：`/livox/lidar`
-* 需要根据话题名 / TF / 频率进行少量调整，详见 `docs/fastlio.md`
+Default topics:
 
+- IMU topic: `/imu`
+- point cloud topic: `/livox/lidar`
 
-![fast-lio](./doc/fast-lio.png)
+Small local adjustments may be needed for topic names, TF settings, and sensor frequency. See `doc/fastlio.md` for details.
 
----
+![Fast-LIO example](./doc/fast-lio.png)
 
-### 5.2 2D SLAM + Navigation
+### 2D SLAM and navigation
 
 ```bash
-# 启动 Gazebo 世界（例：Playpen）
 roslaunch scout_gazebo_sim scout_mini_playpen.launch
-
-# EKF 融合
 roslaunch scout_filter ekf_filter_cmd.launch
-
-# GMapping 建图
 roslaunch scout_slam scout_slam.launch
-
-# Navigation 导航
 roslaunch scout_navigation scout_navigation.launch
-# 在 RViz 使用 "2D Nav Goal" 发送目标点
 ```
 
-* 地图保存/加载与参数调整见 `docs/slam.md`、`docs/navigation.md`
+Then use `2D Nav Goal` in RViz to send the navigation target.
 
----
+For mapping notes, see `doc/gmapping.md`.
 
-## 6. 文档导航
+## Repository Layout
 
-* `docs/simulation.md`：世界选择与启动参数
-* `docs/sensors.md`：传感器接口说明（含 Mid-360）
-* `docs/fastlio.md`：Fast-LIO 仿真与配置要点
-* `docs/slam.md`：GMapping 建图与地图保存/加载
-* `docs/navigation.md`：Navigation Stack 配置与常见问题
+The main project layout is:
 
----
+- `scout_gazebo_sim/`: Gazebo worlds, models, robot assets, and sensor plugins
+- `scout_bringup/scout_filter/`: EKF fusion configuration
+- `scout_bringup/scout_slam/`: 2D SLAM launch files and saved maps
+- `scout_bringup/scout_navigation/`: navigation launch files
+- `scout_bringup/scout_teleop/`: teleoperation utilities
+- `doc/`: project notes, screenshots, and workflow documents
 
-## 7. 目录结构
+## Documentation
 
-```
-AuToGo_robot_sim/
-├── launch/                  # 启动文件
-│   ├── scout_mini_empty_world.launch
-│   ├── scout_mini_playpen.launch
-│   ├── scout_mini_house.launch
-│   └── scout_empty_world.launch
-├── scout_description/        # 机器人模型与传感器
-├── scout_gazebo_sim/         # 仿真环境与插件
-├── scout_base/               # 底盘里程计
-├── scout_filter/             # EKF 融合
-├── scout_slam/               # GMapping 建图
-├── scout_navigation/         # Navigation Stack
-├── scout_teleop/             # 键盘控制
-└── docs/                     # 说明文档
-```
+Detailed project notes are currently stored in:
 
----
+- `doc/simulation.md`
+- `doc/sensors.md`
+- `doc/fastlio.md`
+- `doc/gmapping.md`
 
-## 8. 贡献与许可
+`doc/navigation.md` is still incomplete and will be expanded in a future update.
 
-* 欢迎提交 Issue / PR 来改进仿真环境与配置模板。
-* 本项目采用 **Apache License 2.0**，详见 [LICENSE](./LICENSE)。
+## Roadmap
 
----
+Planned maintenance work includes:
 
-## 9. 学术与专利声明
+- improve English documentation coverage
+- make Fast-LIO setup more reproducible
+- expand navigation workflow documentation
+- prepare a cleaner baseline for future open-source navigation library work
 
-本项目旨在为 **科研实验、学术论文与专利研发** 提供基础仿真平台：
+## Known Limitations
 
-* 可在学术论文中引用本仓库，保持署名与链接。
-* 部分创新性内容可能在专利申请与论文中使用，具体实现将以学术成果为准。
-* 使用本仓库即视为接受 [LICENSE](./LICENSE) 中的相关条款。
+- The project currently targets `ROS1 Noetic` on Ubuntu 20.04.
+- Some detailed workflow documents remain in Chinese.
+- Fast-LIO setup may require environment-specific topic and TF adjustments.
+- Navigation documentation is not yet complete.
 
----
+## Contributing
 
-This project is licensed under the Apache License 2.0 - see the [LICENSE](./LICENSE) file for details.
+Issues and pull requests are welcome.
 
+If you report a bug, please include:
+
+- your environment
+- the launch file you used
+- the exact command you ran
+- logs, screenshots, or topic information when possible
+
+For contribution expectations, see `CONTRIBUTING.md`.
+
+## Security
+
+If you discover a security-sensitive issue, please follow `SECURITY.md` instead of posting full details publicly.
+
+## License
+
+This project is licensed under the Apache License 2.0. See `LICENSE` for details.
 
 ## Citation
 
-If you use **AuToGo_robot_sim** in your research, please cite it as:
+If you use `AuToGo_robot_sim` in your research, please cite it as:
 
 ```bibtex
 @misc{Chen2025_AuToGoRobotSim,
   author       = {Ziyang Chen},
-  title        = {AuToGo\_robot\_sim: A Multi-Functional Mobile Robot Simulation Platform for ROS1 Noetic and Gazebo},
+  title        = {AuToGo_robot_sim: A Multi-Functional Mobile Robot Simulation Platform for ROS1 Noetic and Gazebo},
   year         = {2025},
   publisher    = {GitHub},
-  howpublished = {\url{https://github.com/<your-username>/AuToGo_robot_sim}},
+  howpublished = {\url{https://github.com/DWDROME/AuToGo_robot_sim}},
   note         = {Open-source simulation platform with SLAM, EKF, Navigation, and Fast-LIO support}
 }
+```
