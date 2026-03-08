@@ -13,6 +13,8 @@
 
     <arg name="livox_lidar" default="false"/>
     <arg name="livox_csv"   default="$(find livox_laser_simulation)/scan_mode/mid360.csv"/>
+    <arg name="livox_topic" default="/livox/lidar" />
+    <arg name="livox_plugin_name" default="gazebo_ros_laser_controller" />
 
     <!-- GPU setting for Lidar -->
     <arg name="gpu"                 default="true"  />
@@ -104,6 +106,8 @@
 
         livox_lidar:='$(arg livox_lidar)'
         livox_csv:='$(arg livox_csv)'
+        livox_topic:='$(arg livox_topic)'
+        livox_plugin_name:='$(arg livox_plugin_name)'
 
         camera:='$(arg camera)'
         imu:='$(arg imu)'

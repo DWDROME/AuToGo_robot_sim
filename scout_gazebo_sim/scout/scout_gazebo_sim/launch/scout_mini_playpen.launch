@@ -54,6 +54,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
       <!-- Livox 扫描模型（CSV 路径）-->
       <arg name="livox_csv" value="$(find livox_laser_simulation)/scan_mode/mid360.csv"/>
+      <arg name="livox_topic" value="/livox/lidar"/>
+      <arg name="livox_plugin_name" value="gazebo_ros_laser_controller"/>
 
       <!-- 其他保持不变 -->
       <arg name="robot_namespace" value=""/>

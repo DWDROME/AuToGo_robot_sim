@@ -35,7 +35,9 @@
     <!-- 3D livox parameters -->
     <!-- 3d_lidar : livox_mid360 -->
     <xacro:arg name="livox_lidar_name" default="livox_mid360" />
-        <xacro:arg name="livox_csv"   default="$(find livox_laser_simulation)/scan_mode/mid360.csv"/>
+    <xacro:arg name="livox_csv" default="$(find livox_laser_simulation)/scan_mode/mid360.csv"/>
+    <xacro:arg name="livox_topic" default="/livox/lidar" />
+    <xacro:arg name="livox_plugin_name" default="gazebo_ros_laser_controller" />
 
 
     <!-- Camera Common parameters -->
@@ -235,7 +237,8 @@
             name="livox"
             xyz="${lidar_pose}"
             rpy="${lidar_orientation}"
-            ros_topic="/livox/point_cloud"
+            plugin_name="$(arg livox_plugin_name)"
+            ros_topic="$(arg livox_topic)"
             csv_file_name="$(arg livox_csv)"/>
     </xacro:if>
 

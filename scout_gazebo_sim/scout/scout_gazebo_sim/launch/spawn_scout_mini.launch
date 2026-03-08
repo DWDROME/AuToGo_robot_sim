@@ -31,6 +31,8 @@
 
     <arg name="livox_lidar" default="false"/>
     <arg name="livox_csv"   default="$(find livox_laser_simulation)/scan_mode/mid360.csv"/>
+    <arg name="livox_topic" default="/livox/lidar" />
+    <arg name="livox_plugin_name" default="gazebo_ros_laser_controller" />
 
     <!-- Camera pose relative to base_link -->
     <arg name="camera_x"            default="0.2"  />
@@ -73,6 +75,8 @@
         <arg name="3d_lidar"            value="$(arg 3d_lidar)"     />
         <arg name="livox_lidar" value="$(arg livox_lidar)"/>
         <arg name="livox_csv"   value="$(arg livox_csv)"/>
+        <arg name="livox_topic" value="$(arg livox_topic)"/>
+        <arg name="livox_plugin_name" value="$(arg livox_plugin_name)"/>
         <arg name="camera"              value="$(arg camera)"       />
         <arg name="imu"                 value="$(arg imu)"          />
         <arg name="gps"                 value="$(arg gps)"          />

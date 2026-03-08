@@ -24,12 +24,13 @@
   <xacro:macro name="Livox_Mid_gazebo_sensor"
                params="
                  link_name
+                 plugin_name:=gazebo_ros_laser_controller
                  visualize:=true
                  update_rate:=10
                  resolution:=0.002
                  noise_mean:=0.0
                  noise_stddev:=0.01
-                 ros_topic:=/livox/point_cloud
+                 ros_topic:=/livox/lidar
                  samples:=24000
                  downsample:=1
                  csv_file_name">
@@ -40,7 +41,7 @@
         <update_rate>${update_rate}</update_rate>
 
         <!-- 仅供可视化的 Ray 配置（角度范围可按需要调整） -->
-        <plugin name="gazebo_ros_laser_controller" filename="liblivox_laser_simulation.so">
+        <plugin name="${plugin_name}" filename="liblivox_laser_simulation.so">
 			  <ray>
 			  <scan>
 				  <horizontal>
@@ -68,13 +69,11 @@
 			  </noise>
 			  </ray>
           <visualize>False</visualize>
-		      <!-- <samples>${samples}</samples> -->
-          <samples>20000</samples>
-		      <downsample>1</downsample>
-		      <!-- <csv_file_name>${downsample}</csv_file_name> -->
-          <csv_file_name>package://livox_laser_simulation/scan_mode/mid360-real-centr.csv</csv_file_name>
+          <samples>${samples}</samples>
+          <downsample>${downsample}</downsample>
+          <csv_file_name>${csv_file_name}</csv_file_name>
           <publish_pointcloud_type>3</publish_pointcloud_type>
-		      <ros_topic>/livox/lidar</ros_topic>
+          <ros_topic>${ros_topic}</ros_topic>
           <frameName>${link_name}</frameName>
         </plugin>
 
@@ -91,8 +90,9 @@
                  name:=livox
                  xyz:='0 0 0.14'
                  rpy:='0 0 0'
+                 plugin_name:=gazebo_ros_laser_controller
                  visualize:=true
-                 ros_topic:=/livox/point_cloud
+                 ros_topic:=/livox/lidar
                  csv_file_name
                  update_rate:=10
                  resolution:=0.002
@@ -139,6 +139,7 @@
     <!-- 在传感器 link 上挂 livox 插件 -->
     <xacro:Livox_Mid_gazebo_sensor
         link_name="${name}_sensor"
+        plugin_name="${plugin_name}"
         visualize="${visualize}"
         update_rate="${update_rate}"
         resolution="${resolution}"
