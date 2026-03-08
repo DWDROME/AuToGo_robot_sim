@@ -27,7 +27,7 @@ The current public scope focuses on:
 ### Simulation worlds
 
 - `scout_mini_empty_world.launch`: empty scene with sensors
-- `scout_mini_playpen.launch`: playpen test scene with sensors and optional 3D setup
+- `scout_mini_playpen.launch`: playpen test scene tuned for the Livox / Fast-LIO profile
 - `scout_mini_house.launch`: house scene with sensors
 - `scout_empty_world.launch`: empty world without sensors
 
@@ -132,13 +132,15 @@ Small local adjustments may be needed for topic names, TF settings, and sensor f
 ### 2D SLAM and navigation
 
 ```bash
-roslaunch scout_gazebo_sim scout_mini_playpen.launch
+roslaunch scout_gazebo_sim scout_mini_house.launch
 roslaunch scout_filter ekf_filter_cmd.launch
 roslaunch scout_slam scout_slam.launch
 roslaunch scout_navigation scout_navigation.launch
 ```
 
 Then use `2D Nav Goal` in RViz to send the navigation target.
+
+Use `scout_mini_house.launch` or `scout_mini_empty_world.launch` for 2D SLAM workflows. The `scout_mini_playpen.launch` profile disables the 2D Hokuyo LiDAR and enables Livox for Fast-LIO experiments.
 
 For mapping notes, see `doc/gmapping.md`.
 
